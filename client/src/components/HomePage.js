@@ -27,7 +27,7 @@ export default function HomePage() {
             </>}
             <ul>
                 {items.map(item => (
-                    <li key={item.id}>{item.name}: {item.description} quantity: {item.quantity} {item.creator}</li>
+                    <li key={item.id}>{item.name}: {item.description.substring(0,100)}... quantity: {item.quantity} {item.creator}</li>
                 ))}
             </ul>
         </div>
