@@ -48,7 +48,7 @@ app.post("/inventory/:username", async (req, res) => {
   try {
     const grabUserId = await knex("user")
       .select("id")
-      .where(user.username, username)
+      .where({username})
       .first();
     if (!grabUserId)
       return res.status(400).json({ error: "user is missing" })
@@ -60,7 +60,7 @@ app.post("/inventory/:username", async (req, res) => {
       quantity
     })
 
-    return res.status(201).json("New item added to inventory");
+    return res.status(201).json({message: "New item added to inventory"});
   } catch (error) {
     return res.status(500).json({ error: "failed to add to inventory. error:" + error });
   }

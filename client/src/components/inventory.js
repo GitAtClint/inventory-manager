@@ -3,19 +3,20 @@ import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 
 export default function Inventory() {
-
     const [items, setItems] = useState([]);
-    const [login, setLogin] = useState({ username: "", password: ""})
+    const [itemToInsert, setItemToInsert] = useState({ username: "", item_name: "", description: "", quantity: 0 })
     const navigate = useNavigate();
 
     const location = useLocation();
     var username = "";
-    location.state ? username=location.state.username : username="guest";
-    
+    location.state ? username = location.state.username : username = "guest";
+
     //if user not logged in will auto redirect to HomePage
-    if(username === "guest")
+    if (username === "guest")
         navigate("/");
-    
+    else
+        setItemToInsert({...itemToInsert, username: username});
+
     useEffect(() => {
         fetch(`http://localhost:8080/inventory/${username}`)
             .then(response => response.json())
@@ -23,15 +24,40 @@ export default function Inventory() {
             .catch(error => console.error('Error fetching data:', error));
     }, [username]);
 
+    
+    const handleItemNameInput = (e) => {
+        setItemToInsert({ ...itemToInsert, item_name: e.target.value });
+    }
+    const handleDescriptionInput = (e) => {
+        setItemToInsert({ ...itemToInsert, description: e.target.value });
+    }
+    const handlequantityInput = (e) => {
+        setItemToInsert({ ...itemToInsert, quantity: e.target.value });
+    }
+
     return (
         <div className="inventory">
             <h1>{username}: Inventory</h1>
-            <Link to="/" state={{username:username}}><button>Full inventory</button></Link>
+            <Link to="/" state={{ username: username }}><button>Full inventory</button></Link>
             <ul>
                 {items.map(item => (
                     <li key={item.id}>{item.name}: {item.description} quantity: {item.quantity} {item.creator}</li>
                 ))}
             </ul>
+
+            <h3>add item</h3>
+            <form className="add-item-form">
+                <label for="item_name">item:</label>
+                <input className="add-item-form" onChange={handleItemNameInput} type="text" id="item_name" required />
+                <br />
+                <label for="description">description:</label>
+                <input className="add-item-form" onChange={handleDescriptionInput} type="text" id="description" required />
+                <br />
+                <label for="quantity">quantity:</label>
+                <input className="add-item-form" onChange={handlequantityInput} type="text" id="quantity" required />
+                <br />
+                <button className="insert-item-button" id="itemButton" type="submit" onClick={clickAddItem}>submit</button>
+            </form>
         </div>
     );
-}
+}                   
