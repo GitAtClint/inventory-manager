@@ -4,7 +4,7 @@ import '../styles/HomePage.css';
 
 export default function Inventory() {
     const [items, setItems] = useState([]);
-    const [itemToInsert, setItemToInsert] = useState({ username: "", item_name: "", description: "", quantity: 0 })
+    const [itemToInsert, setItemToInsert] = useState({ item_name: "", description: "", quantity: 0 })
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -14,8 +14,6 @@ export default function Inventory() {
     //if user not logged in will auto redirect to HomePage
     if (username === "guest")
         navigate("/");
-    else
-        setItemToInsert({...itemToInsert, username: username});
 
     useEffect(() => {
         fetch(`http://localhost:8080/inventory/${username}`)
@@ -24,7 +22,29 @@ export default function Inventory() {
             .catch(error => console.error('Error fetching data:', error));
     }, [username]);
 
-    
+
+
+
+
+    const clickAddItem = (e) => {
+        e.preventDefault();
+        fetch(`http://localhost:8080/inventory/${username}`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({...itemToInsert }),
+        })
+            .then((response) => response.json())
+            .then((post) => {
+                if (post.message === "New item added to inventory") {
+                    alert(post.message);
+                    window.location.reload();
+                } else {
+                    alert(post.message);
+                }
+            });
+    }
     const handleItemNameInput = (e) => {
         setItemToInsert({ ...itemToInsert, item_name: e.target.value });
     }
