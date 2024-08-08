@@ -19,7 +19,7 @@ app.get("/", async (req, res) => {
 });
 //==========================inventory==========================
 app.get("/inventory/:username", async (req, res) => {
-  const {username} = req.params;
+  const { username } = req.params;
   try {
     const itemList = await knex("item")
       .join("user", "user_id", "=", "user.id")
@@ -31,29 +31,38 @@ app.get("/inventory/:username", async (req, res) => {
     return res.status(400).json({ error: "failed to fetch item details" + error });
   }
 });
-table.integer('user_id').references('id').inTable('user').notNullable();
-        table.string('item_name').notNullable();
-        table.string('description').notNullable();
-        table.integer('quantity').notNullable();
-    });
 
 app.post("/inventory/:username", async (req, res) => {
-  const {username} = req.params;
-  const {name, description, quantity} = req.body;
+  const { username } = req.params;
+  const { item_name, description, quantity } = req.body;
+  if (!item_name) {
+    return res.status(400).json({ error: "item name is required" });
+  }
+  if (!description) {
+    return res.status(400).json({ error: "description is required" });
+  }
+  if (!quantity) {
+    return res.status(400).json({ error: "quantity is required" });
+  }
+
   try {
-    const insertItem = await knex("item").insert(
-      user.
-      name,
+    const grabUserId = await knex("user")
+      .select("id")
+      .where(user.username, username)
+      .first();
+    if (!grabUserId)
+      return res.status(400).json({ error: "user is missing" })
+
+    const insertItem = await knex("item").insert({
+      user_id: grabUserId.id,
+      item_name,
       description,
       quantity
-    )
-      .join("user", "user_id", "=", "user.id")
-      .select("item.item_name as name", "item.description as description", "item.quantity as quantity")
-      .where("user.username", username);
+    })
 
-    res.json(itemList);
+    return res.status(201).json("New item added to inventory");
   } catch (error) {
-    return res.status(400).json({ error: "failed to fetch item details" + error });
+    return res.status(500).json({ error: "failed to add to inventory. error:" + error });
   }
 });
 //=======================login==================================
