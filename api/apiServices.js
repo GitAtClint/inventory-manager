@@ -23,7 +23,7 @@ app.get("/inventory/:username", async (req, res) => {
   try {
     const itemList = await knex("item")
       .join("user", "user_id", "=", "user.id")
-      .select("item.item_name as name", "item.description as description", "item.quantity as quantity")
+      .select("item.item_name as name", "item.description as description", "item.quantity as quantity", "item.id as id")
       .where("user.username", username);
 
     res.json(itemList);
@@ -61,6 +61,30 @@ app.post("/inventory/:username", async (req, res) => {
     })
 
     return res.status(201).json({message: "New item added to inventory"});
+  } catch (error) {
+    return res.status(500).json({ error: "failed to add to inventory. error:" + error });
+  }
+});
+
+app.patch("/inventory/:itemID", async (req, res) => {
+  const { itemID } = req.params;
+  const { item_name, description, quantity } = req.body;
+  if (!item_name) {
+    return res.status(400).json({ error: "item name is required" });
+  }
+  if (!description) {
+    return res.status(400).json({ error: "description is required" });
+  }
+  if (!quantity) {
+    return res.status(400).json({ error: "quantity is required" });
+  }
+
+  try {
+    const updateItem = await knex("item")
+    .where({ id: itemID })
+    .update ({ item_name, description, quantity})
+
+    return res.status(202).json({message: "Item updated"});
   } catch (error) {
     return res.status(500).json({ error: "failed to add to inventory. error:" + error });
   }

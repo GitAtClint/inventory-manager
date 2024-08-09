@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 
 export default function Inventory() {
     const [items, setItems] = useState([]);
     const [editing, setEditing] = useState(false);
     const [itemToInsert, setItemToInsert] = useState(null)
-    const [itemToViewOrEdit, setItemToViewOrEdit] = useState({ item_name: "", description: "", quantity: 0 })
+    const [itemToViewOrEdit, setItemToViewOrEdit] = useState({ item_name: "", description: "", quantity: 0, itemID: "" })
 
     const navigate = useNavigate();
     const location = useLocation();
-
+    //const updatedBody = {};
     var username = "";
     location.state ? username = location.state.username : username = "guest";
 
@@ -34,10 +34,32 @@ export default function Inventory() {
         setItemToViewOrEdit(null)
     }
     const viewItem = (item) => {
-        setItemToViewOrEdit({ item_name: item.name, description: item.description, quantity: item.quantity })
+        setItemToViewOrEdit({ item_name: item.name, description: item.description, quantity: item.quantity, itemID: item.id })
     }
 
-    const clickAddItem = (e) => {
+    const updateItem = (e) => {
+        e.preventDefault();
+        fetch(`http://localhost:8080/inventory/${itemToViewOrEdit.itemID}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({itemID: itemToViewOrEdit.itemID, ...itemToViewOrEdit}),
+        })
+        .then((response) => response.json())
+        .then((updated) => {
+            if (updated.message === "Item updated") {
+                alert(updated.message);
+                setEditing(false);
+                setItemToViewOrEdit(null);
+                window.location.reload();
+            } else {
+                alert(updated.message);
+            }
+        });
+    }
+
+    const addItem = (e) => {
         e.preventDefault();
         fetch(`http://localhost:8080/inventory/${username}`, {
             method: "POST",
@@ -57,12 +79,18 @@ export default function Inventory() {
             });
     }
     const handleItemNameInput = (e) => {
+        editing ? 
+        setItemToViewOrEdit({ ...itemToViewOrEdit, item_name: e.target.value }) :
         setItemToInsert({ ...itemToInsert, item_name: e.target.value });
     }
     const handleDescriptionInput = (e) => {
+        editing ? 
+        setItemToViewOrEdit({ ...itemToViewOrEdit, description: e.target.value }) :
         setItemToInsert({ ...itemToInsert, description: e.target.value });
     }
     const handlequantityInput = (e) => {
+        editing ? 
+        setItemToViewOrEdit({ ...itemToViewOrEdit, quantity: e.target.value }) :
         setItemToInsert({ ...itemToInsert, quantity: e.target.value });
     }
 
@@ -73,15 +101,15 @@ export default function Inventory() {
 
             {itemToViewOrEdit ?
                 <>
-                    {console.log(editing + setItemToViewOrEdit.name)}
                     {editing ?
                         (<>
                             <h1>Item Name:</h1>
-                            <input type="text" value={itemToViewOrEdit.item_name} />
+                            <input onChange={handleItemNameInput} type="text" defaultValue={itemToViewOrEdit.item_name} />
                             <h3>description:</h3>
-                            <input type="text" value={itemToViewOrEdit.description} />
+                            <input onChange={handleDescriptionInput} type="text" defaultValue={itemToViewOrEdit.description} />
                             <h5>Quantity:</h5>
-                            <input type="text" value={itemToViewOrEdit.quantity} />
+                            <input onChange={handlequantityInput} type="text" defaultValue={itemToViewOrEdit.quantity} />
+                            <button onClick={updateItem}>submit</button>
                         </>) : (<>
                             <h1>{itemToViewOrEdit.item_name}</h1>
                             <h3>description:</h3>
@@ -114,15 +142,10 @@ export default function Inventory() {
                         <label htmlFor="quantity">quantity:</label>
                         <input className="add-item-form" onChange={handlequantityInput} type="text" id="quantity" required />
                         <br />
-                        <button className="insert-item-button" id="itemButton" type="submit" onClick={clickAddItem}>submit</button>
+                        <button className="insert-item-button" id="itemButton" type="submit" onClick={addItem}>submit</button>
                     </form>
                 </>
             }
-            {/* </> :
-            <>
-            <button onClick={editMode}>submit</button>
-            <button onClick={editMode}>cancel</button>
-            </>} */}
         </div>
     );
 }                   
