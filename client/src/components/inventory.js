@@ -4,10 +4,13 @@ import '../styles/HomePage.css';
 
 export default function Inventory() {
     const [items, setItems] = useState([]);
-    const [itemToInsert, setItemToInsert] = useState({ item_name: "", description: "", quantity: 0 })
-    const navigate = useNavigate();
+    const [editing, setEditing] = useState(false);
+    const [itemToInsert, setItemToInsert] = useState(null)
+    const [itemToViewOrEdit, setItemToViewOrEdit] = useState({ item_name: "", description: "", quantity: 0 })
 
+    const navigate = useNavigate();
     const location = useLocation();
+
     var username = "";
     location.state ? username = location.state.username : username = "guest";
 
@@ -24,7 +27,15 @@ export default function Inventory() {
 
 
 
-
+    const editMode = () => {
+        setEditing(!editing);
+    }
+    const leaveView = () => {
+        setItemToViewOrEdit(null)
+    }
+    const viewItem = (item) => {
+        setItemToViewOrEdit({ item_name: item.name, description: item.description, quantity: item.quantity })
+    }
 
     const clickAddItem = (e) => {
         e.preventDefault();
@@ -33,7 +44,7 @@ export default function Inventory() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({...itemToInsert }),
+            body: JSON.stringify({ ...itemToInsert }),
         })
             .then((response) => response.json())
             .then((post) => {
@@ -59,25 +70,59 @@ export default function Inventory() {
         <div className="inventory">
             <h1>{username}: Inventory</h1>
             <Link to="/" state={{ username: username }}><button>Full inventory</button></Link>
-            <ul>
-                {items.map(item => (
-                    <li key={item.id}>{item.name}: {item.description.substring(0,100)}... quantity: {item.quantity} {item.creator}</li>
-                ))}
-            </ul>
 
-            <h3>add item</h3>
-            <form className="add-item-form">
-                <label for="item_name">item:</label>
-                <input className="add-item-form" onChange={handleItemNameInput} type="text" id="item_name" required />
-                <br />
-                <label for="description">description:</label>
-                <input className="add-item-form" onChange={handleDescriptionInput} type="text" id="description" required />
-                <br />
-                <label for="quantity">quantity:</label>
-                <input className="add-item-form" onChange={handlequantityInput} type="text" id="quantity" required />
-                <br />
-                <button className="insert-item-button" id="itemButton" type="submit" onClick={clickAddItem}>submit</button>
-            </form>
+            {itemToViewOrEdit ?
+                <>
+                    {console.log(editing + setItemToViewOrEdit.name)}
+                    {editing ?
+                        (<>
+                            <h1>Item Name:</h1>
+                            <input type="text" value={itemToViewOrEdit.item_name} />
+                            <h3>description:</h3>
+                            <input type="text" value={itemToViewOrEdit.description} />
+                            <h5>Quantity:</h5>
+                            <input type="text" value={itemToViewOrEdit.quantity} />
+                        </>) : (<>
+                            <h1>{itemToViewOrEdit.item_name}</h1>
+                            <h3>description:</h3>
+                            <p>{itemToViewOrEdit.description}</p>
+                            <h5>Quantity:</h5>
+                            <p>{itemToViewOrEdit.quantity}</p>
+
+                            <button onClick={editMode}>edit</button>
+                            <button onClick={leaveView}>return</button>
+                        </>)}
+                </> :
+                <>
+                    <ul>
+                        {items.map(item => (
+                            <li key={item.id}>{item.name}:
+                                {item.description.substring(0, 100)}... quantity:
+                                {item.quantity}
+                                {/* <button>view</button></li> */}
+                                <button onClick={() => viewItem(item)}>view</button></li>
+                        ))}
+                    </ul>
+                    <h3>add item</h3>
+                    <form className="add-item-form">
+                        <label htmlFor="item_name">item:</label>
+                        <input className="add-item-form" onChange={handleItemNameInput} type="text" id="item_name" required />
+                        <br />
+                        <label htmlFor="description">description:</label>
+                        <input className="add-item-form" onChange={handleDescriptionInput} type="text" id="description" required />
+                        <br />
+                        <label htmlFor="quantity">quantity:</label>
+                        <input className="add-item-form" onChange={handlequantityInput} type="text" id="quantity" required />
+                        <br />
+                        <button className="insert-item-button" id="itemButton" type="submit" onClick={clickAddItem}>submit</button>
+                    </form>
+                </>
+            }
+            {/* </> :
+            <>
+            <button onClick={editMode}>submit</button>
+            <button onClick={editMode}>cancel</button>
+            </>} */}
         </div>
     );
 }                   
