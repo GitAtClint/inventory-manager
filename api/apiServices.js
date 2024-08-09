@@ -2,10 +2,12 @@ const e = require("express");
 const express = require("express");
 const knex = require("knex")(require("./knexfile.js")[process.env.NODE_ENV || "development"]);
 const cors = require("cors");
+const bcrypt = require('bcrypt');
 const app = express();
 app.use(cors());
 app.use(express.json());
 const port = 8080;
+const saltRounds = 12;
 
 app.get("/", async (req, res) => {
   try {
@@ -43,7 +45,8 @@ app.post("/inventory/:username", async (req, res) => {
   }
   if (!quantity) {
     return res.status(400).json({ error: "quantity is required" });
-  }
+  } else if(typeof quantity !== 'number')
+    return res.status(400).json({ error: "quantity is must be a number" });
 
   try {
     const grabUserId = await knex("user")
@@ -106,6 +109,7 @@ app.delete("/inventory/:itemID", async (req, res) => {
     return res.status(500).json({ error: "Failed to remove item. error:" + error });
   }
 });
+
 //=======================login==================================
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -114,9 +118,18 @@ app.post("/login", async (req, res) => {
       .where({ username: username })
       .first();
 
+    // bcrypt.compare(password, verifyUser.password)
+    // .then((result) => {
+    //   if (result)
+    //     res.status(200).json({ message: "logged in" })
+    //   else
+    //     res.status(401).json({ message: "invalid password" })
+    // })
+    const allowLogin = await bcrypt.compare(password, verifyUser.password);
+
     if (!verifyUser)
       return res.status(401).json({ message: "invalid username" });
-    else if (verifyUser.password !== password)
+    else if (!allowLogin)//verifyUser.password !== password)
       return res.status(401).json({ message: "invalid password" })
     else
       return res.status(200).json({ message: "logged in" })
@@ -148,16 +161,32 @@ app.post("/createAccount", async (req, res) => {
     if (grabUserId)
       return res.status(400).json({ error: "User already exists" })
 
+    // bcrypt.hash(password, saltRounds)
+    // .then((hash) => {
+    //   const insertAccount = knex("user").insert({
+    //     first_name,
+    //     last_name,
+    //     username,
+    //     password: hash
+    //   })
+    //   return insertAccount;//note needed due to 
+    // })
+    // .catch((err) => {
+    //   console.log("Hash Brown error. Please try fries", err)
+    //   return res.status(400).json({ message: "failed to create new user" })
+    // });
+
+    const hashPassword = await bcrypt.hash(password, saltRounds)
     const insertAccount = await knex("user").insert({
       first_name,
       last_name,
       username,
-      password
+      password: hashPassword
     })
 
     return res.status(200).json({ message: "Account Created, Please Log in" })
   } catch {
-    return res.status(401).json({ message: "failed to login" })
+    return res.status(401).json({ message: "failed to create new user" })
   }
 })
 
