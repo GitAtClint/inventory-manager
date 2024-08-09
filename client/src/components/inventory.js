@@ -44,42 +44,42 @@ export default function Inventory() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({itemID: itemToViewOrEdit.itemID, ...itemToViewOrEdit}),
+            body: JSON.stringify({ itemID: itemToViewOrEdit.itemID, ...itemToViewOrEdit }),
         })
-        .then((response) => response.json())
-        .then((updated) => {
-            if (updated.message === "Item updated") {
-                alert(updated.message);
-                setEditing(false);
-                setItemToViewOrEdit(null);
-                window.location.reload();
-            } else {
-                alert(updated.message);
-            }
-        });
+            .then((response) => response.json())
+            .then((updated) => {
+                if (updated.message === "Item updated") {
+                    alert(updated.message);
+                    setEditing(false);
+                    setItemToViewOrEdit(null);
+                    window.location.reload();
+                } else {
+                    alert(updated.message);
+                }
+            });
     }
 
     const deleteItem = () => {
         // if(confirm('Are you sure you want to delete this item?')) {
-            //e.preventDefault();
-            fetch(`http://localhost:8080/inventory/${itemToViewOrEdit.itemID}`, {
-                method: "DELETE",
-                headers: {
-                    'Content-Type': 'application/json',
+        //e.preventDefault();
+        fetch(`http://localhost:8080/inventory/${itemToViewOrEdit.itemID}`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then((response) => response.json())
+            .then((deleted) => {
+                if (deleted.message === "Item successfully removed") {
+                    alert(deleted.message);
+                    window.location.reload();
+                } else {
+                    alert(deleted.message);
                 }
-            })
-                .then((response) => response.json())
-                .then((deleted) => {
-                    if (deleted.message === "Item successfully removed") {
-                        alert(deleted.message);
-                        window.location.reload();
-                    } else {
-                        alert(deleted.message);
-                    }
-                });
-    //     } else {
-    //         console.log('delete canceled');
-    //    }
+            });
+        //     } else {
+        //         console.log('delete canceled');
+        //    }
     }
 
     const addItem = (e) => {
@@ -102,23 +102,23 @@ export default function Inventory() {
             });
     }
     const handleItemNameInput = (e) => {
-        editing ? 
-        setItemToViewOrEdit({ ...itemToViewOrEdit, item_name: e.target.value }) :
-        setItemToInsert({ ...itemToInsert, item_name: e.target.value });
+        editing ?
+            setItemToViewOrEdit({ ...itemToViewOrEdit, item_name: e.target.value }) :
+            setItemToInsert({ ...itemToInsert, item_name: e.target.value });
     }
     const handleDescriptionInput = (e) => {
-        editing ? 
-        setItemToViewOrEdit({ ...itemToViewOrEdit, description: e.target.value }) :
-        setItemToInsert({ ...itemToInsert, description: e.target.value });
+        editing ?
+            setItemToViewOrEdit({ ...itemToViewOrEdit, description: e.target.value }) :
+            setItemToInsert({ ...itemToInsert, description: e.target.value });
     }
     const handlequantityInput = (e) => {
-        editing ? 
-        setItemToViewOrEdit({ ...itemToViewOrEdit, quantity: e.target.value }) :
-        setItemToInsert({ ...itemToInsert, quantity: e.target.value });
+        editing ?
+            setItemToViewOrEdit({ ...itemToViewOrEdit, quantity: e.target.value }) :
+            setItemToInsert({ ...itemToInsert, quantity: e.target.value });
     }
 
     return (
-        <div className="inventory">
+        <div className='inventory'>
             <Link to="/" state={{ username: username }}><button>Full inventory</button></Link>
             <h1>{username}:</h1>
 
@@ -141,32 +141,38 @@ export default function Inventory() {
                             <p>{itemToViewOrEdit.quantity}</p>
 
                             <button onClick={editMode}>edit</button>
-                            <button onClick={() => {if(window.confirm('Are you sure you want to delete this item?')){deleteItem();}}}>delete</button>
+                            <button onClick={() => { if (window.confirm('Are you sure you want to delete this item?')) { deleteItem(); } }}>delete</button>
                             <button onClick={leaveView}>return</button>
                         </>)}
                 </> :
                 <>
-                    <ul>
-                        {items.map(item => (
-                            <li onClick={() => viewItem(item)} key={item.id}>{item.name}:
-                                {item.description.length>100 ? `${item.description.substring(0, 100)}...` : item.description} quantity:
-                                {item.quantity}
-                                {/* <button onClick={() => viewItem(item)}>view</button> */}
-                            </li>
+                    <div className='gridStyled'>
+                        <div className='gridHeadersLayout'>
+                            <div className='nameHeader'>Item Name</div>
+                            <div className='descriptionHeader'>Description Name</div>
+                            <div className='quantityHeader'>Quantity Name</div>
+                        </div>
+                        {items.map((item) => (
+                            <div className='gridLineLayout'>
+                                <div onClick={() => viewItem(item)} className='item'>{item.name}</div>
+                                <div onClick={() => viewItem(item)} className='description'>{item.description.length > 100 ? `${item.description.substring(0, 100)}...` : item.description}</div>
+                                <div onClick={() => viewItem(item)} className='quantity'>{item.quantity}</div>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
+
                     <h3>add item</h3>
-                    <form className="add-item-form">
+                    <form className='add-item-form'>
                         <label htmlFor="item_name">item:</label>
-                        <input className="add-item-form" onChange={handleItemNameInput} type="text" id="item_name" required />
+                        <input className='add-item-form' onChange={handleItemNameInput} type="text" id="item_name" required />
                         <br />
                         <label htmlFor="description">description:</label>
-                        <input className="add-item-form" onChange={handleDescriptionInput} type="text" id="description" required />
+                        <input className='add-item-form' onChange={handleDescriptionInput} type="text" id="description" required />
                         <br />
                         <label htmlFor="quantity">quantity:</label>
-                        <input className="add-item-form" onChange={handlequantityInput} type="text" id="quantity" required />
+                        <input className='add-item-form' onChange={handlequantityInput} type="text" id="quantity" required />
                         <br />
-                        <button className="insert-item-button" id="itemButton" type="submit" onClick={addItem}>submit</button>
+                        <button className='insert-item-button' id="itemButton" type="submit" onClick={addItem}>submit</button>
                     </form>
                 </>
             }

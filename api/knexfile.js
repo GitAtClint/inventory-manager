@@ -1,5 +1,5 @@
 require("dotenv").config();
-const connectionString = process.env.DB_CONNECTION_STRING;
+//const connectionString = process.env.DB_CONNECTION_STRING;
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }

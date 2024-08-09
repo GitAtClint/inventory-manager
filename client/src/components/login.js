@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import '../styles/HomePage.css';
+import '../styles/login.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
@@ -77,37 +77,37 @@ export default function Login() {
     //     const { first_name, last_name, username, password } = req.body;
     return (
         <>
-        <button onClick={() => navigate("/")}>home</button>
-        <div className="login-register">
-            {isRegistering ?
-                <form className="login-form">
-                    <label for="first_name">first name:</label>
-                    <input onChange={handleFirstNameInput} type="text" id="first_name" required />
-                    <br />
-                    <label for="last_name">last name:</label>
-                    <input onChange={handleLastNameInput} type="text" id="last_name" required />
-                    <br />
-                    <label for="username">username:</label>
-                    <input onChange={handleNameInput} type="text" id="username" required />
-                    <br />
-                    <label for="password">password:</label>
-                    <input onChange={handlePwInput} type="text" id="password" required />
-                    <br />
-                    <button className="create-button" id="createAccountButton" type="submit" onClick={clickedCreateAccount}>Create Account</button>
-                </form>
-                :
-                <form className="login-form">
-                    <label for="username">username:</label>
-                    <input onChange={handleNameInput} type="text" id="username" required />
-                    <br />
-                    <label for="password">password:</label>
-                    <input onChange={handlePwInput} type="text" id="password" required />
-                    <br />
-                    <button className="login-button" id="loginButton" type="submit" onClick={clickedLogin}>Login</button>
-                    <button className="register-button" id="registerButton" type="submit" onClick={clickedRegister}>Register</button>
-                </form>
-            }
-        </div>
+            <button onClick={() => navigate("/")}>home</button>
+            <div className='login-register'>
+                {isRegistering ?
+                    <form className='login-form'>
+                        <label for="first_name">first name:</label>
+                        <input onChange={handleFirstNameInput} type="text" id="first_name" required />
+                        <br />
+                        <label for="last_name">last name:</label>
+                        <input onChange={handleLastNameInput} type="text" id="last_name" required />
+                        <br />
+                        <label for="username">username:</label>
+                        <input onChange={handleNameInput} type="text" id="username" required />
+                        <br />
+                        <label for="password">password:</label>
+                        <input className='passwordField' onChange={handlePwInput} type="text" id="password" required />
+                        <br />
+                        <button className='create-button' id="createAccountButton" type="submit" onClick={clickedCreateAccount}>Create Account</button>
+                    </form>
+                    :
+                    <form className='login-form'>
+                        <label for="username">username:</label>
+                        <input onChange={handleNameInput} type="text" id="username" required />
+                        <br />
+                        <label for="password">password:</label>
+                        <input className='passwordField' onChange={handlePwInput} type="text" id="password" required />
+                        <br />
+                        <button className='login-button' id="loginButton" type="submit" onClick={clickedLogin}>Login</button>
+                        <button className='register-button' id="registerButton" type="submit" onClick={clickedRegister}>Register</button>
+                    </form>
+                }
+            </div>
         </>
     );
 }

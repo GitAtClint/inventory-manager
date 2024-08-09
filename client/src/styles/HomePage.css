@@ -43,37 +43,46 @@ button {
   margin-top: 5px;
 }
 
-.login-register {
-  /* width: 200px;
-    padding: 20px; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateY(50%);
-}
 
-.login-form {
-  width: 500px;
-  border: 1px solid black;
-  background-color: rgb(238, 213, 182);
-  padding: 10px;
-}
 
-.login-form input {
+.gridStyled {
+  display: grid;
   padding: 10px;
-  width: 400px;
-  margin-top: 3px;
-  margin-bottom: 15px;
-  background-color: white;
-}
-
-.login-form button {
-  padding: 10px;
-  margin-bottom: 10px;
-  width: 100px;
-  flex-direction: row;
-  background-color: #462fb9;
-  color: white;
-  border: 1px solid black;
   cursor: pointer;
+}
+
+/* https://www.freecodecamp.org/news/complete-guide-to-css-grid/ */
+.gridLineLayout {
+  display: inline-grid;
+  grid-template-columns: 150px 1fr 150px;
+  margin: 1px;
+  padding: 1px;
+}
+.gridHeadersLayout {
+  display: inline-grid;
+  grid-template-columns: 150px 1fr 150px;
+  margin: 1px;
+  padding: 1px;
+  font-weight: bold;
+}
+
+.item {
+  grid-column: 1;
+}
+.nameHeader{
+  grid-column: 1;
+}
+
+.description {
+  grid-column: 2;
+}
+.descriptionHeader{
+  grid-column: 2;
+}
+
+.quantity {
+  grid-column: 3;
+}
+.quantityHeader{
+  grid-column: 3;
 }

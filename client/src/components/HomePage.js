@@ -46,11 +46,22 @@ export default function HomePage() {
 
                     <button onClick={leaveView}>return</button>
                 </> :
-                <ul>
-                    {items.map(item => (
-                        <li onClick={() => viewItem(item)} key={item.id}>{item.name}:--- {item.description.length > 100 ? `${item.description.substring(0, 100)}...` : item.description} ---quantity: {item.quantity} ---created by: {item.creator}</li>
-                    ))}
-                </ul>
+                <>
+                    <div className='gridStyled'>
+                        <div className='gridHeadersLayout'>
+                            <div className='nameHeader'>Item Name</div>
+                            <div className='descriptionHeader'>Description Name</div>
+                            <div className='quantityHeader'>Quantity Name</div>
+                        </div>
+                        {items.map((item) => (
+                            <div className='gridLineLayout'>
+                                <div onClick={() => viewItem(item)} className='item'>{item.name}</div>
+                                <div onClick={() => viewItem(item)} className='description'>{item.description.length > 100 ? `${item.description.substring(0, 100)}...` : item.description}</div>
+                                <div onClick={() => viewItem(item)} className='quantity'>{item.quantity}</div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             }
         </div>
     );

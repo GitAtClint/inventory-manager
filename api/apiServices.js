@@ -1,4 +1,3 @@
-const e = require("express");
 const express = require("express");
 const knex = require("knex")(require("./knexfile.js")[process.env.NODE_ENV || "development"]);
 const cors = require("cors");
@@ -46,12 +45,12 @@ app.post("/inventory/:username", async (req, res) => {
   if (!quantity) {
     return res.status(400).json({ message: "quantity is required" });
   } //else if(typeof quantity != 'number')
-    //return res.status(400).json({ message: "quantity is must be a number" });
+  //return res.status(400).json({ message: "quantity is must be a number" });
 
   try {
     const grabUserId = await knex("user")
       .select("id")
-      .where({username})
+      .where({ username })
       .first();
     if (!grabUserId)
       return res.status(400).json({ message: "user is missing" })
@@ -63,7 +62,7 @@ app.post("/inventory/:username", async (req, res) => {
       quantity
     })
 
-    return res.status(201).json({message: "New item added to inventory"});
+    return res.status(201).json({ message: "New item added to inventory" });
   } catch (error) {
     return res.status(500).json({ message: "failed to add to inventory. error:" + error });
   }
@@ -84,10 +83,10 @@ app.patch("/inventory/:itemID", async (req, res) => {
 
   try {
     const updateItem = await knex("item")
-    .where({ id: itemID })
-    .update ({ item_name, description, quantity})
+      .where({ id: itemID })
+      .update({ item_name, description, quantity })
 
-    return res.status(202).json({message: "Item updated"});
+    return res.status(202).json({ message: "Item updated" });
   } catch (error) {
     return res.status(500).json({ message: "failed to add to inventory. error:" + error });
   }
@@ -97,13 +96,13 @@ app.delete("/inventory/:itemID", async (req, res) => {
   const { itemID } = req.params;
   try {
     const deleteItem = await knex("item")
-    .where({ id: itemID })
-    .del();
+      .where({ id: itemID })
+      .del();
 
     if (deleteItem === 0) {
       return res.status(404).json({ message: "Item not found" });
     } else {
-      return res.status(202).json({message: "Item successfully removed"});
+      return res.status(202).json({ message: "Item successfully removed" });
     }
   } catch (error) {
     return res.status(500).json({ message: "Failed to remove item. error:" + error });
@@ -154,7 +153,7 @@ app.post("/createAccount", async (req, res) => {
   try {
     const grabUserId = await knex("user")
       .select("id")
-      .where({username})
+      .where({ username })
       .first();
     if (grabUserId)
       return res.status(400).json({ message: "User already exists" })
