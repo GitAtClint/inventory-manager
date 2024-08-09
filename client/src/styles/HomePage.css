@@ -34,3 +34,8 @@ body {
   input {
     margin-left: 5px;
   }
+  button {
+    padding: 5px;
+    margin-left: 5px;
+    margin-top: 5px;
+  }

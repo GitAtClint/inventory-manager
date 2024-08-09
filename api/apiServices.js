@@ -125,4 +125,40 @@ app.post("/login", async (req, res) => {
   }
 })
 
+app.post("/createAccount", async (req, res) => {
+  const { first_name, last_name, username, password } = req.body;
+  if (!first_name) {
+    return res.status(400).json({ error: "First Name is required" });
+  }
+  if (!last_name) {
+    return res.status(400).json({ error: "Last Name is required" });
+  }
+  if (!username) {
+    return res.status(400).json({ error: "username is required" });
+  }
+  if (!password) {
+    return res.status(400).json({ error: "password is required" });
+  }
+
+  try {
+    const grabUserId = await knex("user")
+      .select("id")
+      .where({username})
+      .first();
+    if (grabUserId)
+      return res.status(400).json({ error: "User already exists" })
+
+    const insertAccount = await knex("user").insert({
+      first_name,
+      last_name,
+      username,
+      password
+    })
+
+    return res.status(200).json({ message: "Account Created, Please Log in" })
+  } catch {
+    return res.status(401).json({ message: "failed to login" })
+  }
+})
+
 app.listen(port, () => console.log(`Server is running at http://localhost:${port}`));
