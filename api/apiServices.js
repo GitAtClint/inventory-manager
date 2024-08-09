@@ -89,6 +89,23 @@ app.patch("/inventory/:itemID", async (req, res) => {
     return res.status(500).json({ error: "failed to add to inventory. error:" + error });
   }
 });
+
+app.delete("/inventory/:itemID", async (req, res) => {
+  const { itemID } = req.params;
+  try {
+    const deleteItem = await knex("item")
+    .where({ id: itemID })
+    .del();
+
+    if (deleteItem === 0) {
+      return res.status(404).json({ error: "Item not found" });
+    } else {
+      return res.status(202).json({message: "Item successfully removed"});
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to remove item. error:" + error });
+  }
+});
 //=======================login==================================
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;

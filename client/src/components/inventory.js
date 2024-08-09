@@ -6,7 +6,7 @@ export default function Inventory() {
     const [items, setItems] = useState([]);
     const [editing, setEditing] = useState(false);
     const [itemToInsert, setItemToInsert] = useState(null)
-    const [itemToViewOrEdit, setItemToViewOrEdit] = useState({ item_name: "", description: "", quantity: 0, itemID: "" })
+    const [itemToViewOrEdit, setItemToViewOrEdit] = useState(null)
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -57,6 +57,29 @@ export default function Inventory() {
                 alert(updated.message);
             }
         });
+    }
+
+    const deleteItem = () => {
+        // if(confirm('Are you sure you want to delete this item?')) {
+            //e.preventDefault();
+            fetch(`http://localhost:8080/inventory/${itemToViewOrEdit.itemID}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then((response) => response.json())
+                .then((deleted) => {
+                    if (deleted.message === "Item successfully removed") {
+                        alert(deleted.message);
+                        window.location.reload();
+                    } else {
+                        alert(deleted.message);
+                    }
+                });
+    //     } else {
+    //         console.log('delete canceled');
+    //    }
     }
 
     const addItem = (e) => {
@@ -118,6 +141,7 @@ export default function Inventory() {
                             <p>{itemToViewOrEdit.quantity}</p>
 
                             <button onClick={editMode}>edit</button>
+                            <button onClick={() => {if(window.confirm('Are you sure you want to delete this item?')){deleteItem();}}}>delete</button>
                             <button onClick={leaveView}>return</button>
                         </>)}
                 </> :
