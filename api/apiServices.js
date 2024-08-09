@@ -16,7 +16,7 @@ app.get("/", async (req, res) => {
       .select("item.item_name as name", "item.description as description", "item.quantity as quantity", "user.username as creator");
     res.json(itemList);
   } catch (error) {
-    return res.status(400).json({ error: "failed to fetch item details" + error });
+    return res.status(400).json({ message: "failed to fetch item details" + error });
   }
 });
 //==========================inventory==========================
@@ -30,7 +30,7 @@ app.get("/inventory/:username", async (req, res) => {
 
     res.json(itemList);
   } catch (error) {
-    return res.status(400).json({ error: "failed to fetch item details" + error });
+    return res.status(400).json({ message: "failed to fetch item details" + error });
   }
 });
 
@@ -38,15 +38,15 @@ app.post("/inventory/:username", async (req, res) => {
   const { username } = req.params;
   const { item_name, description, quantity } = req.body;
   if (!item_name) {
-    return res.status(400).json({ error: "item name is required" });
+    return res.status(400).json({ message: "item name is required" });
   }
   if (!description) {
-    return res.status(400).json({ error: "description is required" });
+    return res.status(400).json({ message: "description is required" });
   }
   if (!quantity) {
-    return res.status(400).json({ error: "quantity is required" });
+    return res.status(400).json({ message: "quantity is required" });
   } else if(typeof quantity !== 'number')
-    return res.status(400).json({ error: "quantity is must be a number" });
+    return res.status(400).json({ message: "quantity is must be a number" });
 
   try {
     const grabUserId = await knex("user")
@@ -54,7 +54,7 @@ app.post("/inventory/:username", async (req, res) => {
       .where({username})
       .first();
     if (!grabUserId)
-      return res.status(400).json({ error: "user is missing" })
+      return res.status(400).json({ message: "user is missing" })
 
     const insertItem = await knex("item").insert({
       user_id: grabUserId.id,
@@ -65,7 +65,7 @@ app.post("/inventory/:username", async (req, res) => {
 
     return res.status(201).json({message: "New item added to inventory"});
   } catch (error) {
-    return res.status(500).json({ error: "failed to add to inventory. error:" + error });
+    return res.status(500).json({ message: "failed to add to inventory. error:" + error });
   }
 });
 
@@ -73,13 +73,13 @@ app.patch("/inventory/:itemID", async (req, res) => {
   const { itemID } = req.params;
   const { item_name, description, quantity } = req.body;
   if (!item_name) {
-    return res.status(400).json({ error: "item name is required" });
+    return res.status(400).json({ message: "item name is required" });
   }
   if (!description) {
-    return res.status(400).json({ error: "description is required" });
+    return res.status(400).json({ message: "description is required" });
   }
   if (!quantity) {
-    return res.status(400).json({ error: "quantity is required" });
+    return res.status(400).json({ message: "quantity is required" });
   }
 
   try {
@@ -89,7 +89,7 @@ app.patch("/inventory/:itemID", async (req, res) => {
 
     return res.status(202).json({message: "Item updated"});
   } catch (error) {
-    return res.status(500).json({ error: "failed to add to inventory. error:" + error });
+    return res.status(500).json({ message: "failed to add to inventory. error:" + error });
   }
 });
 
@@ -101,12 +101,12 @@ app.delete("/inventory/:itemID", async (req, res) => {
     .del();
 
     if (deleteItem === 0) {
-      return res.status(404).json({ error: "Item not found" });
+      return res.status(404).json({ message: "Item not found" });
     } else {
       return res.status(202).json({message: "Item successfully removed"});
     }
   } catch (error) {
-    return res.status(500).json({ error: "Failed to remove item. error:" + error });
+    return res.status(500).json({ message: "Failed to remove item. error:" + error });
   }
 });
 
@@ -127,30 +127,28 @@ app.post("/login", async (req, res) => {
     // })
     const allowLogin = await bcrypt.compare(password, verifyUser.password);
 
-    if (!verifyUser)
-      return res.status(401).json({ message: "invalid username" });
-    else if (!allowLogin)//verifyUser.password !== password)
+    if (!allowLogin)
       return res.status(401).json({ message: "invalid password" })
     else
       return res.status(200).json({ message: "logged in" })
   } catch {
-    return res.status(401).json({ message: "failed to login" })
+    return res.status(401).json({ message: "invalid username" })
   }
 })
 
 app.post("/createAccount", async (req, res) => {
   const { first_name, last_name, username, password } = req.body;
   if (!first_name) {
-    return res.status(400).json({ error: "First Name is required" });
+    return res.status(400).json({ message: "First Name is required" });
   }
   if (!last_name) {
-    return res.status(400).json({ error: "Last Name is required" });
+    return res.status(400).json({ message: "Last Name is required" });
   }
   if (!username) {
-    return res.status(400).json({ error: "username is required" });
+    return res.status(400).json({ message: "username is required" });
   }
   if (!password) {
-    return res.status(400).json({ error: "password is required" });
+    return res.status(400).json({ message: "password is required" });
   }
 
   try {
@@ -159,7 +157,7 @@ app.post("/createAccount", async (req, res) => {
       .where({username})
       .first();
     if (grabUserId)
-      return res.status(400).json({ error: "User already exists" })
+      return res.status(400).json({ message: "User already exists" })
 
     // bcrypt.hash(password, saltRounds)
     // .then((hash) => {
@@ -176,6 +174,9 @@ app.post("/createAccount", async (req, res) => {
     //   return res.status(400).json({ message: "failed to create new user" })
     // });
 
+    //++note: the sync fetch has a ton of issues. using this async is much better
+    //should probably be changed in the learning content
+    //https://stackoverflow.com/questions/48799894/trying-to-hash-a-password-using-bcrypt-inside-an-async-function
     const hashPassword = await bcrypt.hash(password, saltRounds)
     const insertAccount = await knex("user").insert({
       first_name,
