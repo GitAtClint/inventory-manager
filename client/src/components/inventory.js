@@ -149,7 +149,7 @@ export default function Inventory() {
                     <ul>
                         {items.map(item => (
                             <li onClick={() => viewItem(item)} key={item.id}>{item.name}:
-                                {item.description.substring(0, 100)}... quantity:
+                                {item.description.length>100 ? `${item.description.substring(0, 100)}...` : item.description} quantity:
                                 {item.quantity}
                                 {/* <button onClick={() => viewItem(item)}>view</button> */}
                             </li>

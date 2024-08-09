@@ -18,7 +18,7 @@ export default function Login() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({...registerUser}),
+            body: JSON.stringify({ ...registerUser }),
         })
             .then((response) => response.json())
             .then((registration) => {
@@ -59,13 +59,13 @@ export default function Login() {
     }
     const handleNameInput = (e) => {
         isRegistering ?
-        setRegisterUser({ ...registerUser, username: e.target.value }) :
-        setLogin({ ...login, username: e.target.value });
+            setRegisterUser({ ...registerUser, username: e.target.value }) :
+            setLogin({ ...login, username: e.target.value });
     }
     const handlePwInput = (e) => {
         isRegistering ?
-        setRegisterUser({ ...registerUser, password: e.target.value }) :
-        setLogin({ ...login, password: e.target.value });
+            setRegisterUser({ ...registerUser, password: e.target.value }) :
+            setLogin({ ...login, password: e.target.value });
     }
     const handleFirstNameInput = (e) => {
         setRegisterUser({ ...registerUser, first_name: e.target.value })
@@ -76,37 +76,39 @@ export default function Login() {
     // app.post("/createAccount", async (req, res) => {
     //     const { first_name, last_name, username, password } = req.body;
     return (
+        <>
+        <button onClick={() => navigate("/")}>home</button>
         <div className="login-register">
-            <button onClick={() => navigate("/")}>home</button>
             {isRegistering ?
                 <form className="login-form">
                     <label for="first_name">first name:</label>
-                    <input className="login-form" onChange={handleFirstNameInput} type="text" id="first_name" required />
+                    <input onChange={handleFirstNameInput} type="text" id="first_name" required />
                     <br />
                     <label for="last_name">last name:</label>
-                    <input className="login-form" onChange={handleLastNameInput} type="text" id="last_name" required />
+                    <input onChange={handleLastNameInput} type="text" id="last_name" required />
                     <br />
                     <label for="username">username:</label>
-                    <input className="login-form" onChange={handleNameInput} type="text" id="username" required />
+                    <input onChange={handleNameInput} type="text" id="username" required />
                     <br />
                     <label for="password">password:</label>
-                    <input className="login-form" onChange={handlePwInput} type="text" id="password" required />
+                    <input onChange={handlePwInput} type="text" id="password" required />
                     <br />
                     <button className="create-button" id="createAccountButton" type="submit" onClick={clickedCreateAccount}>Create Account</button>
                 </form>
                 :
                 <form className="login-form">
                     <label for="username">username:</label>
-                    <input className="login-form" onChange={handleNameInput} type="text" id="username" required />
+                    <input onChange={handleNameInput} type="text" id="username" required />
                     <br />
                     <label for="password">password:</label>
-                    <input className="login-form" onChange={handlePwInput} type="text" id="password" required />
+                    <input onChange={handlePwInput} type="text" id="password" required />
                     <br />
                     <button className="login-button" id="loginButton" type="submit" onClick={clickedLogin}>Login</button>
                     <button className="register-button" id="registerButton" type="submit" onClick={clickedRegister}>Register</button>
                 </form>
             }
         </div>
+        </>
     );
 }
 

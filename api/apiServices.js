@@ -45,8 +45,8 @@ app.post("/inventory/:username", async (req, res) => {
   }
   if (!quantity) {
     return res.status(400).json({ message: "quantity is required" });
-  } else if(typeof quantity !== 'number')
-    return res.status(400).json({ message: "quantity is must be a number" });
+  } //else if(typeof quantity != 'number')
+    //return res.status(400).json({ message: "quantity is must be a number" });
 
   try {
     const grabUserId = await knex("user")
