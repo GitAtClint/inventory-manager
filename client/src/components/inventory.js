@@ -119,8 +119,8 @@ export default function Inventory() {
 
     return (
         <div className="inventory">
-            <h1>{username}: Inventory</h1>
             <Link to="/" state={{ username: username }}><button>Full inventory</button></Link>
+            <h1>{username}:</h1>
 
             {itemToViewOrEdit ?
                 <>
@@ -148,11 +148,11 @@ export default function Inventory() {
                 <>
                     <ul>
                         {items.map(item => (
-                            <li key={item.id}>{item.name}:
+                            <li onClick={() => viewItem(item)} key={item.id}>{item.name}:
                                 {item.description.substring(0, 100)}... quantity:
                                 {item.quantity}
-                                {/* <button>view</button></li> */}
-                                <button onClick={() => viewItem(item)}>view</button></li>
+                                {/* <button onClick={() => viewItem(item)}>view</button> */}
+                            </li>
                         ))}
                     </ul>
                     <h3>add item</h3>

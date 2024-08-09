@@ -5,4 +5,32 @@ body {
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: bisque;
+  }
+
+  li {
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  h1 {
+    margin-left: 10px;
+    margin-bottom: 0px;
+  }
+  h3 {
+    margin-left: 10px;
+    margin-bottom: 0px;
+  }
+  h5 {
+    margin-left: 10px;
+    margin-bottom: 0px;
+  }
+  p {
+    margin-left: 10px;
+    margin-bottom: 0px;
+  }
+  label {
+    margin-left: 10px;
+  }
+  input {
+    margin-left: 5px;
   }
